@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './features/users/users.module';
-import { AuthModule } from './features/auth/auth.module';
+import { UsersModule } from '../features/users/users.module';
+import { AuthModule } from '../features/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaService } from './prisma/prisma.service';
-import { SeedModule } from './features/seed/seed.module';
+import { PrismaService } from '../prisma/prisma.service';
+import { SeedModule } from '../features/seed/seed.module';
 import * as Joi from 'joi';
 
 @Module({
