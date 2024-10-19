@@ -30,7 +30,10 @@ export class AuthService {
       passwordHash: hashedPassword,
     });
 
-    const payload = new JwtPayload(newUser.id);
+    const payload = new JwtPayload(
+      newUser.id,
+      newUser.roles.map((x) => x.name),
+    );
     return {
       access_token: await this.jwtService.signAsync(
         JSON.parse(JSON.stringify(payload)),
@@ -54,7 +57,10 @@ export class AuthService {
       throw new UnauthorizedException('email or password incorrect.');
     }
 
-    const payload = new JwtPayload(user.id);
+    const payload = new JwtPayload(
+      user.id,
+      user.roles.map((x) => x.name),
+    );
     return {
       access_token: await this.jwtService.signAsync(
         JSON.parse(JSON.stringify(payload)),
