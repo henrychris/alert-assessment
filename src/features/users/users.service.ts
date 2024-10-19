@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from './entities/user.entity';
@@ -44,13 +44,31 @@ export class UsersService {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.user.delete({ where: { id: id } });
+  async remove(id: number) {
+    const user = await this.prisma.user.findFirst({ where: { id: id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return await this.prisma.user.delete({ where: { id: id } });
   }
 
   async assignRoleAsync(assignRoleRequest: AssignRoleRequest) {
-    // todo: validate user and role exist
-    // todo: add api tests
+    const user = await this.prisma.user.findFirst({
+      where: { id: assignRoleRequest.userId },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const role = await this.prisma.role.findFirst({
+      where: { id: assignRoleRequest.roleId },
+    });
+    if (!role) {
+      throw new NotFoundException('Role not found');
+    }
+
+    // todo: add api tests, record video
     await this.prisma.user.update({
       where: { id: assignRoleRequest.userId },
       data: { roles: { connect: { id: assignRoleRequest.roleId } } },
