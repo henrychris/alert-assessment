@@ -23,13 +23,11 @@ export class RolesGuard implements CanActivate {
     }
 
     let request = context.switchToHttp().getRequest();
-    const user = request.user as User;
+    const user = request.user;
     if (!user) {
       throw new UnauthorizedException('User not authenticated');
     }
 
-    return requiredRoles.some((role) =>
-      user.roles?.find((x) => x.name === role),
-    );
+    return requiredRoles.some((role) => user.roles.includes(role));
   }
 }
