@@ -12,6 +12,7 @@ export class UsersService {
       data: {
         ...createUserDto,
       },
+      include: { roles: true },
     });
   }
 
@@ -38,6 +39,7 @@ export class UsersService {
       where: {
         email: email,
       },
+      include: { roles: true},
     });
   }
 
