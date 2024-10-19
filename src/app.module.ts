@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './features/users/users.module';
 import { AuthModule } from './features/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { PrismaService } from './prisma/prisma.service';
 import * as Joi from 'joi';
 
 @Module({
@@ -27,6 +28,6 @@ import * as Joi from 'joi';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PrismaService],
 })
 export class AppModule {}
