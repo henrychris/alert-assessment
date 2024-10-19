@@ -5,6 +5,7 @@ import { UsersModule } from './features/users/users.module';
 import { AuthModule } from './features/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma/prisma.service';
+import { SeedModule } from './features/seed/seed.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -26,6 +27,7 @@ import * as Joi from 'joi';
         JWT_SECRET: Joi.string().required(),
       }),
     }),
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

@@ -8,6 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SeedService } from './features/seed/seed.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +27,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  const seedService = app.get(SeedService);
+  await seedService.seedRoles();
 
   const configService = app.get(ConfigService);
   const PORT: number = configService.getOrThrow('PORT');
