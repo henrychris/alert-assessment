@@ -19,6 +19,14 @@ export class UsersService {
     return `This action returns all users`;
   }
 
+  async findByEmailAsync(email: string): Promise<User | null> {
+    return await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+  }
+
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
