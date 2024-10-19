@@ -28,9 +28,6 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException('User not authenticated');
     }
 
-    console.log(request.user);
-    console.log(JSON.stringify(user));
-
     return requiredRoles.some((role) =>
       user.roles?.find((x) => x.name === role),
     );
