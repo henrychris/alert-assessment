@@ -1,9 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignupRequest } from './dto/signup-request-dto';
 import { UsersService } from '../users/users.service';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './dto/jwtPayload';
+import { LoginRequest } from './dto/login-request-dto';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +31,30 @@ export class AuthService {
     });
 
     const payload = new JwtPayload(newUser.id);
+    return {
+      access_token: await this.jwtService.signAsync(
+        JSON.parse(JSON.stringify(payload)),
+      ),
+    };
+  }
+
+  async loginAsync(loginRequest: LoginRequest) {
+    const user = await this.userService.findByEmailAsync(loginRequest.email);
+    if (!user) {
+      console.warn('User not found. Email or password is incorrect.');
+      throw new UnauthorizedException('email or password incorrect.');
+    }
+
+    const isPasswordValid = await compare(
+      loginRequest.password,
+      user.passwordHash,
+    );
+    if (!isPasswordValid) {
+      console.warn(`User found. User id: ${user.id}. Password incorrect.`);
+      throw new UnauthorizedException('email or password incorrect.');
+    }
+
+    const payload = new JwtPayload(user.id);
     return {
       access_token: await this.jwtService.signAsync(
         JSON.parse(JSON.stringify(payload)),
