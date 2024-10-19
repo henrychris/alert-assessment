@@ -7,6 +7,8 @@ import {
   Post,
   Body,
   HttpCode,
+  ParseIntPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -28,8 +30,18 @@ export class UsersController {
   @Delete(':id')
   @Roles(Role.Admin)
   @UseGuards(RolesGuard)
-  remove(@Param('id') param: number) {
-    return this.usersService.remove(param);
+  @HttpCode(204)
+  async remove(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    )
+    param: number,
+  ) {
+    await this.usersService.remove(param);
+    return {};
   }
 
   @Post('assign-role')

@@ -45,7 +45,9 @@ export class UsersService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.prisma.user.delete({ where: { id: id } });
+  }
+
   async assignRoleAsync(assignRoleRequest: AssignRoleRequest) {
     // todo: validate user and role exist
     // todo: add api tests
