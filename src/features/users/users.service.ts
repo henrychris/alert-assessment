@@ -50,7 +50,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    return await this.prisma.user.delete({ where: { id: id } });
+    await this.prisma.user.delete({ where: { id: id } });
   }
 
   async assignRoleAsync(assignRoleRequest: AssignRoleRequest) {
