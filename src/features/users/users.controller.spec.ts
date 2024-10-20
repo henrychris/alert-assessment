@@ -71,7 +71,7 @@ describe('UsersController', () => {
           roles: [],
         },
       ];
-      jest.spyOn(service, 'findAllAsync').mockResolvedValue(result);
+      jest.spyOn(service, 'findAllAsync').mockResolvedValueOnce(result);
 
       expect(await controller.findAll()).toBe(result);
     });
@@ -81,7 +81,7 @@ describe('UsersController', () => {
     it('should remove a user', async () => {
       const mockRemove = jest
         .spyOn(service, 'remove')
-        .mockResolvedValue(undefined);
+        .mockResolvedValueOnce(undefined);
 
       await controller.remove(1);
 
@@ -93,7 +93,7 @@ describe('UsersController', () => {
         const assignRoleRequest = { userId: 1, roleId: 1 };
         const mockAssignRole = jest
           .spyOn(service, 'assignRoleAsync')
-          .mockResolvedValue(undefined);
+          .mockResolvedValueOnce(undefined);
 
         await controller.assignRole(assignRoleRequest);
         expect(mockAssignRole).toHaveBeenCalledWith(assignRoleRequest);
