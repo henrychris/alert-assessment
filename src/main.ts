@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SeedService } from './features/seed/seed.service';
+import { ErrorResponseFilter } from './filters/errorFilter';
+import { SuccessResponseInterceptor } from './interceptors/successInterceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,6 +29,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.useGlobalFilters(new ErrorResponseFilter());
+  app.useGlobalInterceptors(new SuccessResponseInterceptor());
 
   const seedService = app.get(SeedService);
   await seedService.seedRoles();
