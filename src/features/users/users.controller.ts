@@ -11,8 +11,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Roles } from 'src/decorators/roles.decorator';
-import { Role } from 'src/common/enums/role.enum';
+import { Roles } from '../../decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 import { RolesGuard } from '../auth/guards/role.guard';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { AssignRoleRequest } from './dto/assign-role.request';
