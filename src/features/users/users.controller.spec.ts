@@ -6,6 +6,7 @@ import { RolesGuard } from '../auth/guards/role.guard';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { it, describe, beforeEach, vi, expect } from 'vitest';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -18,9 +19,9 @@ describe('UsersController', () => {
         {
           provide: UsersService,
           useValue: {
-            findAllAsync: jest.fn(),
-            remove: jest.fn(),
-            assignRoleAsync: jest.fn(),
+            findAllAsync: vi.fn(),
+            remove: vi.fn(),
+            assignRoleAsync: vi.fn(),
           },
         },
         {
@@ -34,19 +35,19 @@ describe('UsersController', () => {
         {
           provide: JwtService,
           useValue: {
-            verifyAsync: jest.fn(),
+            verifyAsync: vi.fn(),
           },
         },
         {
           provide: ConfigService,
           useValue: {
-            getOrThrow: jest.fn(),
+            getOrThrow: vi.fn(),
           },
         },
         {
           provide: Reflector,
           useValue: {
-            getAllAndOverride: jest.fn(),
+            getAllAndOverride: vi.fn(),
           },
         },
       ],
@@ -71,7 +72,7 @@ describe('UsersController', () => {
           roles: [],
         },
       ];
-      jest.spyOn(service, 'findAllAsync').mockResolvedValueOnce(result);
+      vi.spyOn(service, 'findAllAsync').mockResolvedValueOnce(result);
 
       expect(await controller.findAll()).toBe(result);
     });
@@ -79,7 +80,7 @@ describe('UsersController', () => {
 
   describe('remove', () => {
     it('should remove a user', async () => {
-      const mockRemove = jest
+      const mockRemove = vi
         .spyOn(service, 'remove')
         .mockResolvedValueOnce(undefined);
 
@@ -91,7 +92,7 @@ describe('UsersController', () => {
     describe('assignRole', () => {
       it('should assign a role to a user', async () => {
         const assignRoleRequest = { userId: 1, roleId: 1 };
-        const mockAssignRole = jest
+        const mockAssignRole = vi
           .spyOn(service, 'assignRoleAsync')
           .mockResolvedValueOnce(undefined);
 

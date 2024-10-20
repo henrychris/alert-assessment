@@ -5,8 +5,9 @@ import { UsersService } from '../users/users.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { SignupRequest } from './dto/signup-request-dto';
 import * as bcrypt from 'bcrypt';
+import { it, describe, beforeEach, vi, expect } from 'vitest';
 
-jest.mock('bcrypt');
+vi.mock('bcrypt');
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -30,14 +31,14 @@ describe('AuthService', () => {
         {
           provide: JwtService,
           useValue: {
-            signAsync: jest.fn(),
+            signAsync: vi.fn(),
           },
         },
         {
           provide: UsersService,
           useValue: {
-            createAsync: jest.fn(),
-            findByEmailAsync: jest.fn(),
+            createAsync: vi.fn(),
+            findByEmailAsync: vi.fn(),
           },
         },
       ],
@@ -61,17 +62,17 @@ describe('AuthService', () => {
         password: 'password123',
       };
 
-      jest.spyOn(usersService, 'findByEmailAsync').mockResolvedValueOnce(null);
-      jest
+      vi.spyOn(usersService, 'findByEmailAsync').mockResolvedValueOnce(null);
+      vi
         .spyOn(bcrypt, 'hash')
         .mockResolvedValueOnce('hashed_password' as never);
-      jest.spyOn(usersService, 'createAsync').mockResolvedValueOnce({
+      vi.spyOn(usersService, 'createAsync').mockResolvedValueOnce({
         id: 1,
         ...signupRequest,
         passwordHash: 'hashed_password',
         roles: [{ name: 'USER' }],
       } as any);
-      jest.spyOn(jwtService, 'signAsync').mockResolvedValueOnce('mock_token');
+      vi.spyOn(jwtService, 'signAsync').mockResolvedValueOnce('mock_token');
 
       const result = await service.signupAsync(signupRequest);
 
@@ -97,7 +98,7 @@ describe('AuthService', () => {
         password: 'password123',
       };
 
-      jest
+      vi
         .spyOn(usersService, 'findByEmailAsync')
         .mockResolvedValueOnce(mockUser);
 

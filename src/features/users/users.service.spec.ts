@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Role, User } from '@prisma/client';
 import { NotFoundException } from '@nestjs/common';
+import { it, describe, beforeEach, vi, expect } from 'vitest';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -31,15 +32,15 @@ describe('UsersService', () => {
           provide: PrismaService,
           useValue: {
             user: {
-              findMany: jest.fn(),
-              findUnique: jest.fn(),
-              findFirst: jest.fn(),
-              create: jest.fn(),
-              delete: jest.fn(),
-              update: jest.fn(),
+              findMany: vi.fn(),
+              findUnique: vi.fn(),
+              findFirst: vi.fn(),
+              create: vi.fn(),
+              delete: vi.fn(),
+              update: vi.fn(),
             },
             role: {
-              findFirst: jest.fn(),
+              findFirst: vi.fn(),
             },
           },
         },
@@ -57,7 +58,7 @@ describe('UsersService', () => {
   describe('findAllAsync', () => {
     it('should return an array of users', async () => {
       const mockUsers: User[] = [mockUser];
-      jest.spyOn(prismaService.user, 'findMany').mockResolvedValueOnce(mockUsers);
+      vi.spyOn(prismaService.user, 'findMany').mockResolvedValueOnce(mockUsers);
 
       expect(await service.findAllAsync()).toBe(mockUsers);
     });
@@ -65,8 +66,8 @@ describe('UsersService', () => {
 
   describe('remove', () => {
     it('should remove a user if found', async () => {
-      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(mockUser);
-      jest.spyOn(prismaService.user, 'delete').mockResolvedValueOnce(mockUser);
+      vi.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(mockUser);
+      vi.spyOn(prismaService.user, 'delete').mockResolvedValueOnce(mockUser);
 
       await service.remove(1);
       expect(prismaService.user.delete).toHaveBeenCalledWith({
@@ -75,7 +76,7 @@ describe('UsersService', () => {
     });
 
     it('should throw NotFoundException if user not found', async () => {
-      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(null);
+      vi.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(null);
 
       await expect(service.remove(1)).rejects.toThrow(NotFoundException);
     });
@@ -83,9 +84,9 @@ describe('UsersService', () => {
 
   describe('assignRoleAsync', () => {
     it('should assign a role to a user if both exist', async () => {
-      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(mockUser);
-      jest.spyOn(prismaService.role, 'findFirst').mockResolvedValueOnce(mockRole);
-      jest.spyOn(prismaService.user, 'update').mockResolvedValueOnce(mockUser);
+      vi.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(mockUser);
+      vi.spyOn(prismaService.role, 'findFirst').mockResolvedValueOnce(mockRole);
+      vi.spyOn(prismaService.user, 'update').mockResolvedValueOnce(mockUser);
 
       await service.assignRoleAsync({ userId: 1, roleId: 1 });
 
@@ -93,7 +94,7 @@ describe('UsersService', () => {
     });
 
     it('should throw NotFoundException if user not found', async () => {
-      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(null);
+      vi.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(null);
 
       await expect(
         service.assignRoleAsync({ userId: 1, roleId: 1 }),
@@ -101,8 +102,8 @@ describe('UsersService', () => {
     });
 
     it('should throw NotFoundException if role not found', async () => {
-      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(mockUser);
-      jest.spyOn(prismaService.role, 'findFirst').mockResolvedValueOnce(null);
+      vi.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(mockUser);
+      vi.spyOn(prismaService.role, 'findFirst').mockResolvedValueOnce(null);
 
       await expect(
         service.assignRoleAsync({ userId: 1, roleId: 1 }),

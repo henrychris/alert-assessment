@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SeedService } from './seed.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { it, describe, beforeEach, vi, expect } from 'vitest';
 
 describe('SeedService', () => {
   let service: SeedService;
@@ -14,15 +15,15 @@ describe('SeedService', () => {
           provide: PrismaService,
           useValue: {
             user: {
-              findMany: jest.fn(),
-              findUnique: jest.fn(),
-              findFirst: jest.fn(),
-              create: jest.fn(),
-              delete: jest.fn(),
-              update: jest.fn(),
+              findMany: vi.fn(),
+              findUnique: vi.fn(),
+              findFirst: vi.fn(),
+              create: vi.fn(),
+              delete: vi.fn(),
+              update: vi.fn(),
             },
             role: {
-              findFirst: jest.fn(),
+              findFirst: vi.fn(),
             },
           },
         },

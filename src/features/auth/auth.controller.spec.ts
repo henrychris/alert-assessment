@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { SignupRequest } from './dto/signup-request-dto';
 import { LoginRequest } from './dto/login-request-dto';
+import { it, describe, beforeEach, vi, expect } from 'vitest';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -15,8 +16,8 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: {
-            signupAsync: jest.fn(),
-            loginAsync: jest.fn(),
+            signupAsync: vi.fn(),
+            loginAsync: vi.fn(),
           },
         },
       ],
@@ -40,7 +41,9 @@ describe('AuthController', () => {
       };
 
       const expectedResult = { access_token: 'mock_token' };
-      jest.spyOn(authService, 'signupAsync').mockResolvedValueOnce(expectedResult);
+      vi.spyOn(authService, 'signupAsync').mockResolvedValueOnce(
+        expectedResult,
+      );
 
       const result = await controller.register(signupRequest);
 
@@ -57,7 +60,7 @@ describe('AuthController', () => {
       };
       const expectedResult = { access_token: 'mock_token' };
 
-      jest.spyOn(authService, 'loginAsync').mockResolvedValueOnce(expectedResult);
+      vi.spyOn(authService, 'loginAsync').mockResolvedValueOnce(expectedResult);
 
       const result = await controller.login(loginRequest);
 
