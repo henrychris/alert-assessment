@@ -21,7 +21,7 @@ This project is a simple **user and role management system** built with **NestJS
 
 Make sure you have the following installed on your system:
 
-- **Node.js** (v16.x or later)
+- **Node.js**
 - **npm**
 - **Docker** (optional, for containerized database)
 - **Prisma CLI**  
@@ -146,3 +146,7 @@ model Role {
    ```bash
    npm run test
    ```
+
+## Appendix
+
+- [Postman Collection](https://www.postman.com/henrychris2003/workspace/assessments/collection/22039666-0e970269-8a50-41ed-b50f-2effb4461c27?action=share&creator=22039666)
