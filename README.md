@@ -1,85 +1,148 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# User and Role Management System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a simple **user and role management system** built with **NestJS** and **Prisma ORM**, supporting JWT-based authentication, role-based access control (RBAC), and REST API endpoints for user and role management.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- User registration and login with JWT-based authentication.
+- Role-based access control (RBAC) with dynamic permissions.
+- Prisma ORM for interacting with the SQL database.
+- Global and local guards for authentication and role validation.
+- RESTful API with CRUD operations for users and roles.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Language:** TypeScript  
+- **Framework:** NestJS  
+- **Database:** PostgreSQL  
+- **ORM:** Prisma  
 
-```bash
-$ npm install
+## Prerequisites
+
+Make sure you have the following installed on your system:
+
+- **Node.js** (v16.x or later)
+- **npm**
+- **Docker** (optional, for containerized database)
+- **Prisma CLI**  
+
+  ```bash
+  npm install prisma --save-dev
+  ```
+
+---
+
+## Getting Started
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/henrychris/alert-assessment.git
+   cd alert-assessment
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set Up Environment Variables**  
+   Create a `.env` file in the project root:
+
+   ```properties
+   PORT=0000
+   DATABASE_URL=""
+   JWT_SECRET=""
+   ```
+
+4. **Set Up Prisma and Database**  
+   Optionally, set up a postgres database with this command:
+
+   ```bash
+   docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432  -d postgres:16.1
+   ```
+
+   Connect to the database and create a new database named 'mydb'.
+   Use `postgresql://postgres:mysecretpassword@localhost:5432/mydb?schema=public` as DATABASE_URL.
+
+   Run the following commands to generate the Prisma client and migrate the schema:
+
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev --name init
+   ```
+
+5. **Start the Application**
+
+   ```bash
+   npm run start:dev
+   ```
+
+## Database Schema
+
+Prisma schema with **User**, **Role**, and a many-to-many relation between them.
+
+```prisma
+model User {
+  id           Int      @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  roles        Role[]   @relation("UserRoles")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  permissions String[]
+  users       User[]   @relation("UserRoles")
+}
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## API Endpoints
 
-# watch mode
-$ npm run start:dev
+- **POST** `/auth/register` – Register a new user.  
+- **POST** `/auth/login` – Authenticate a user and return a JWT.  
+- **POST** `/users/assign-role` – Assign a role to a user.  
+- **GET** `/users` – Fetch all users with their roles.  
+- **DELETE** `/users/:id` – Delete a user (Admin-only).
 
-# production mode
-$ npm run start:prod
-```
+---
 
-## Run tests
+## Authentication & Authorization
 
-```bash
-# unit tests
-$ npm run test
+1. **JWT Authentication**  
+   - On successful login, a JWT token is issued.
+   - Token is required in the `Authorization` header for all non-auth routes:
 
-# e2e tests
-$ npm run test:e2e
+     ```text
+     Authorization: Bearer <token>
+     ```
 
-# test coverage
-$ npm run test:cov
-```
+2. **Role-Based Access Control (RBAC)**  
+   - Admin-only routes are protected by the `RolesGuard`.
+   - Use the `@Roles()` decorator to specify the allowed Role:
 
-## Resources
+     ```typescript
+     @Roles(Role.Admin)
+     @UseGuard(RolesGuard)
+     @Get('admin')
+     getAdminData() {
+       return 'This is admin data';
+     }
+     ```
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Testing
 
-## Support
+1. **Run Tests**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+   ```bash
+   npm run test
+   ```
